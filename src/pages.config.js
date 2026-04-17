@@ -48,6 +48,12 @@
  * The mainPage value must match a key in the PAGES object exactly.
  */
 import Home from './pages/Home';
+import Login from './pages/Login';
+import Signup from './pages/Signup';
+import ForgotPassword from './pages/ForgotPassword';
+import ResetPassword from './pages/ResetPassword';
+import AuthCallback from './pages/AuthCallback';
+import ChooseRole from './pages/ChooseRole';
 import PatientOnboarding1 from './pages/PatientOnboarding1';
 import PatientOnboarding2 from './pages/PatientOnboarding2';
 import PatientOnboarding3 from './pages/PatientOnboarding3';
@@ -75,6 +81,12 @@ import __Layout from './Layout.jsx';
 
 export const PAGES = {
     "Home": Home,
+    "Login": Login,
+    "Signup": Signup,
+    "ForgotPassword": ForgotPassword,
+    "ResetPassword": ResetPassword,
+    "AuthCallback": AuthCallback,
+    "ChooseRole": ChooseRole,
     "PatientOnboarding1": PatientOnboarding1,
     "PatientOnboarding2": PatientOnboarding2,
     "PatientOnboarding3": PatientOnboarding3,

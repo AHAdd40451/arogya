@@ -10,6 +10,7 @@ import { Calendar, DollarSign, Star, Clock, Check, X, Settings, Users, Wifi, Wif
 import NotificationBanner from "@/components/NotificationBanner";
 import DashboardCard from "@/components/dashboard/DashboardCard";
 import StatCard from "@/components/dashboard/StatCard";
+import { useAuth } from "@/hooks/useAuth";
 
 const mockRequests = [
   { id: 1, patient: "John Doe", type: "Routine", time: "2:00 PM", status: "pending" },
@@ -30,6 +31,8 @@ const fadeIn = { initial: { opacity: 0, y: 12 }, animate: { opacity: 1, y: 0 } }
 
 export default function ProviderDashboard() {
   const navigate = useNavigate();
+  const { profile } = useAuth();
+  const displayName = profile?.full_name || "Provider";
   const [requests, setRequests] = useState(mockRequests);
   const [online, setOnline] = useState(true);
   const [notification, setNotification] = useState(null);
@@ -48,7 +51,7 @@ export default function ProviderDashboard() {
         <motion.div {...fadeIn} className="flex flex-col sm:flex-row sm:items-start justify-between mb-6 sm:mb-8 gap-4">
           <div>
             <h1 className="text-xl sm:text-2xl font-bold text-[#1F2937]">Provider Dashboard</h1>
-            <p className="text-slate-500 mt-0.5 text-sm">Welcome back, Jane Smith, NP</p>
+            <p className="text-slate-500 mt-0.5 text-sm">Welcome back, {displayName}</p>
           </div>
           <button
             onClick={() => {

@@ -4,9 +4,14 @@ import { createPageUrl } from "@/utils";
 import { Activity, Menu, X, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
+import { useAuth } from "@/hooks/useAuth";
+import { signOut } from "@/services/auth";
+import { getRoleDashboardPage } from "@/services/profile";
 
 export default function Layout({ children, currentPageName }) {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const { user, profile, loading } = useAuth();
+  const dashboardPage = profile?.role ? getRoleDashboardPage(profile.role) : null;
 
   const navLinks = [
     { label: "Home", page: "Home" },
@@ -46,26 +51,66 @@ export default function Layout({ children, currentPageName }) {
 
             {/* Desktop CTAs */}
             <div className="hidden md:flex items-center gap-2">
-              <Link to={createPageUrl("ProviderOnboarding1")}>
-                <Button size="sm" variant="ghost" className="text-slate-600 hover:text-[#1F2937] text-sm font-medium">
-                  For Providers
-                </Button>
-              </Link>
-              <Link to={createPageUrl("PatientOnboarding1")}>
-                <Button size="sm" className="bg-[#2A7F7F] hover:bg-[#236969] text-white rounded-lg text-sm font-medium shadow-sm">
-                  Get Started
-                  <ChevronRight className="w-3.5 h-3.5 ml-0.5" />
-                </Button>
-              </Link>
+              {!loading && user ? (
+                <>
+                  {dashboardPage ? (
+                    <Link to={createPageUrl(dashboardPage)}>
+                      <Button size="sm" className="bg-[#2A7F7F] hover:bg-[#236969] text-white rounded-lg text-sm font-medium shadow-sm">
+                        Dashboard
+                        <ChevronRight className="w-3.5 h-3.5 ml-0.5" />
+                      </Button>
+                    </Link>
+                  ) : null}
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    className="text-slate-600 hover:text-[#1F2937] text-sm font-medium"
+                    onClick={async () => {
+                      await signOut();
+                    }}
+                  >
+                    Logout
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <Link to={`${createPageUrl("Signup")}?role=provider`}>
+                    <Button size="sm" variant="ghost" className="text-slate-600 hover:text-[#1F2937] text-sm font-medium">
+                      For Providers
+                    </Button>
+                  </Link>
+                  <Link to={`${createPageUrl("Signup")}?role=patient`}>
+                    <Button size="sm" className="bg-[#2A7F7F] hover:bg-[#236969] text-white rounded-lg text-sm font-medium shadow-sm">
+                      Get Started
+                      <ChevronRight className="w-3.5 h-3.5 ml-0.5" />
+                    </Button>
+                  </Link>
+                  <Link to={createPageUrl("Login")}>
+                    <Button size="sm" variant="outline" className="rounded-lg border-slate-200 text-sm font-medium">
+                      Sign in
+                    </Button>
+                  </Link>
+                </>
+              )}
             </div>
 
             {/* Mobile: Get Started + hamburger */}
             <div className="flex md:hidden items-center gap-2">
-              <Link to={createPageUrl("PatientOnboarding1")}>
-                <Button size="sm" className="bg-[#2A7F7F] hover:bg-[#236969] text-white rounded-lg text-xs font-medium px-3 py-1.5">
-                  Get Started
-                </Button>
-              </Link>
+              {!loading && user ? (
+                dashboardPage ? (
+                  <Link to={createPageUrl(dashboardPage)}>
+                    <Button size="sm" className="bg-[#2A7F7F] hover:bg-[#236969] text-white rounded-lg text-xs font-medium px-3 py-1.5">
+                      Dashboard
+                    </Button>
+                  </Link>
+                ) : null
+              ) : (
+                <Link to={`${createPageUrl("Signup")}?role=patient`}>
+                  <Button size="sm" className="bg-[#2A7F7F] hover:bg-[#236969] text-white rounded-lg text-xs font-medium px-3 py-1.5">
+                    Get Started
+                  </Button>
+                </Link>
+              )}
               <button
                 onClick={() => setMobileOpen(!mobileOpen)}
                 className="p-2 text-slate-500 hover:text-slate-700 rounded-lg hover:bg-slate-50 transition-colors"
@@ -104,11 +149,32 @@ export default function Layout({ children, currentPageName }) {
                   </Link>
                 ))}
                 <div className="pt-3 border-t border-slate-100 mt-2">
-                  <Link to={createPageUrl("ProviderOnboarding1")} onClick={() => setMobileOpen(false)}>
-                    <Button variant="outline" className="w-full rounded-lg border-slate-200 text-sm font-medium mb-2" size="sm">
-                      For Providers
+                  {!loading && user ? (
+                    <Button
+                      variant="outline"
+                      className="w-full rounded-lg border-slate-200 text-sm font-medium mb-2"
+                      size="sm"
+                      onClick={async () => {
+                        setMobileOpen(false);
+                        await signOut();
+                      }}
+                    >
+                      Logout
                     </Button>
-                  </Link>
+                  ) : (
+                    <>
+                      <Link to={createPageUrl("Login")} onClick={() => setMobileOpen(false)}>
+                        <Button variant="outline" className="w-full rounded-lg border-slate-200 text-sm font-medium mb-2" size="sm">
+                          Sign in
+                        </Button>
+                      </Link>
+                      <Link to={`${createPageUrl("Signup")}?role=provider`} onClick={() => setMobileOpen(false)}>
+                        <Button variant="outline" className="w-full rounded-lg border-slate-200 text-sm font-medium mb-2" size="sm">
+                          For Providers
+                        </Button>
+                      </Link>
+                    </>
+                  )}
                 </div>
               </div>
             </motion.div>

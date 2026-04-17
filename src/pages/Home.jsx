@@ -56,13 +56,13 @@ export default function Home() {
 
             {/* Buttons — full width on mobile */}
             <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-3 px-2 sm:px-0">
-              <Link to={createPageUrl("PatientOnboarding1")} className="w-full sm:w-auto">
+              <Link to={`${createPageUrl("Signup")}?role=patient`} className="w-full sm:w-auto">
                 <Button className="w-full sm:w-auto bg-[#2A7F7F] hover:bg-[#236969] text-white px-7 py-5 text-sm font-semibold rounded-xl shadow-sm group">
                   Get Started as Patient
                   <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-0.5 transition-transform" />
                 </Button>
               </Link>
-              <Link to={createPageUrl("ProviderOnboarding1")} className="w-full sm:w-auto">
+              <Link to={`${createPageUrl("Signup")}?role=provider`} className="w-full sm:w-auto">
                 <Button variant="outline" className="w-full sm:w-auto border-slate-200 text-[#1F2937] hover:bg-slate-50 px-7 py-5 text-sm font-semibold rounded-xl group">
                   Become a Provider
                   <ChevronRight className="w-4 h-4 ml-1 group-hover:translate-x-0.5 transition-transform" />
@@ -148,7 +148,7 @@ export default function Home() {
         <div className="max-w-xl mx-auto px-5 sm:px-6 text-center">
           <h2 className="text-2xl sm:text-3xl font-bold text-[#1F2937] mb-3">Ready to get started?</h2>
           <p className="text-slate-500 text-sm mb-8">No subscription. No insurance. Just care when you need it.</p>
-          <Link to={createPageUrl("PatientOnboarding1")} className="block sm:inline-block">
+          <Link to={`${createPageUrl("Signup")}?role=patient`} className="block sm:inline-block">
             <Button className="w-full sm:w-auto bg-[#2A7F7F] hover:bg-[#236969] text-white px-9 py-5 text-sm font-semibold rounded-xl shadow-sm group">
               Get Started — $59.99 per visit
               <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-0.5 transition-transform" />

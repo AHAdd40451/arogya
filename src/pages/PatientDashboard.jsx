@@ -9,6 +9,7 @@ import { Calendar, Pill, FlaskConical, Clock, ArrowRight, DollarSign, User, Sear
 import NotificationBanner from "@/components/NotificationBanner";
 import DashboardCard from "@/components/dashboard/DashboardCard";
 import StatCard from "@/components/dashboard/StatCard";
+import { useAuth } from "@/hooks/useAuth";
 
 const mockAppointments = [
   { id: 1, provider: "NP Jane Smith", date: "March 10", time: "2:00 PM", type: "Routine", status: "Upcoming" },
@@ -33,6 +34,8 @@ const mockHistory = [
 const fadeIn = { initial: { opacity: 0, y: 12 }, animate: { opacity: 1, y: 0 } };
 
 export default function PatientDashboard() {
+  const { profile } = useAuth();
+  const displayName = profile?.full_name || "Patient";
   const [notification, setNotification] = React.useState(null);
 
   React.useEffect(() => {
@@ -47,7 +50,7 @@ export default function PatientDashboard() {
         <motion.div {...fadeIn} className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-4">
           <div>
             <h1 className="text-2xl sm:text-3xl font-bold text-slate-900">Patient Dashboard</h1>
-            <p className="text-slate-500 mt-1">Welcome back, Jane Doe</p>
+            <p className="text-slate-500 mt-1">Welcome back, {displayName}</p>
           </div>
           <Link to={createPageUrl("TriageScreen")}>
             <Button className="bg-[#2A7F7F] hover:bg-[#236969] rounded-xl px-5 py-4 text-sm font-semibold shadow-sm group">

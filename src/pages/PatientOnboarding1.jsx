@@ -6,19 +6,51 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import OnboardingLayout from "@/components/onboarding/OnboardingLayout";
+import { useAuth } from "@/hooks/useAuth";
+import { markOnboardingStepCompleted, setMyRoleIfUnset, updateMyProfile, upsertPatientProfile } from "@/services/profile";
 
 export default function PatientOnboarding1() {
   const navigate = useNavigate();
+  const { user, loading } = useAuth();
   const [form, setForm] = useState({ name: "", dob: "", gender: "", phone: "", email: "" });
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState("");
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    navigate(createPageUrl("PatientOnboarding2"));
+  React.useEffect(() => {
+    if (loading) return;
+    if (!user) {
+      navigate(`${createPageUrl("Signup")}?role=patient`, { replace: true });
+      return;
+    }
+    setForm((prev) => ({ ...prev, email: user.email ?? prev.email }));
+  }, [loading, user, navigate]);
+
+  const submit = async () => {
+    setError("");
+    setSubmitting(true);
+    try {
+      await setMyRoleIfUnset("patient");
+      await updateMyProfile({ full_name: form.name, phone: form.phone });
+      await upsertPatientProfile({ date_of_birth: form.dob, gender: form.gender });
+      await markOnboardingStepCompleted({ step: 1 });
+      navigate(createPageUrl("PatientOnboarding2"));
+    } catch (err) {
+      setError(String(err.message || err));
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
     <OnboardingLayout step={1} totalSteps={4} title="Welcome to Arogya" subtitle="Let's get you set up to receive care quickly." role="patient">
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          submit();
+        }}
+        className="space-y-4"
+      >
+        {error ? <p className="text-sm text-red-600">{error}</p> : null}
         <div>
           <Label>Full Name</Label>
           <Input placeholder="Jane Doe" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} className="mt-1.5" required />
@@ -47,12 +79,13 @@ export default function PatientOnboarding1() {
         </div>
         <div>
           <Label>Email</Label>
-          <Input type="email" placeholder="you@email.com" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} className="mt-1.5" required />
+          <Input type="email" placeholder="you@email.com" value={form.email} className="mt-1.5" required disabled />
         </div>
-        <Button type="submit" className="w-full bg-teal-600 hover:bg-teal-700 rounded-xl py-5 mt-2">
+        <Button type="submit" disabled={submitting} className="w-full bg-teal-600 hover:bg-teal-700 rounded-xl py-5 mt-2 disabled:opacity-60">
           Continue →
         </Button>
       </form>
     </OnboardingLayout>
   );
 }
+
