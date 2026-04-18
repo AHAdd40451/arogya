@@ -44,7 +44,6 @@ Auth pages:
 - `/ForgotPassword`
 - `/ResetPassword`
 - `/AuthCallback`
-- `/ChooseRole`
 
 Onboarding pages (protected):
 - Patient: `/PatientOnboarding1` → `/PatientOnboarding4`
@@ -59,4 +58,3 @@ Dashboards (protected):
 - Add rate-limiting + bot protection (e.g., hCaptcha) for signup/login
 - Use Supabase **Storage** buckets for provider documents (license, insurance, ID, resume)
 - Create admin-only tables/policies for verification workflows (provider approval)
-

@@ -35,7 +35,7 @@ export default function Login() {
     if (loading || profileLoading) return;
     if (!user || !profile || profile?.__error) return;
     if (!profile.role) {
-      navigate(createPageUrl("ChooseRole"), { replace: true });
+      navigate(createPageUrl("AuthCallback"), { replace: true });
       return;
     }
     if (!profile.onboarding_completed_at) {
@@ -53,6 +53,11 @@ export default function Login() {
     setSubmitting(true);
     try {
       await signInWithEmail(values);
+      try {
+        localStorage.setItem("arogya_intended_role", roleChoice);
+      } catch {
+        // ignore
+      }
       // Role choice is a UX hint only; actual routing uses DB profile.role.
       navigate(createPageUrl("AuthCallback"), { replace: true, state: { roleChoice } });
     } catch (e) {
@@ -147,7 +152,7 @@ export default function Login() {
         </form>
       </Form>
 
-      {/* <div className="relative py-2">
+      <div className="relative py-2">
         <div className="absolute inset-0 flex items-center">
           <div className="w-full border-t border-slate-200" />
         </div>
@@ -164,6 +169,11 @@ export default function Login() {
         onClick={async () => {
           setAuthError("");
           try {
+            try {
+              localStorage.setItem("arogya_intended_role", roleChoice);
+            } catch {
+              // ignore
+            }
             await signInWithGoogle();
           } catch (e) {
             setAuthError(getReadableAuthErrorMessage(e));
@@ -171,8 +181,7 @@ export default function Login() {
         }}
       >
         Continue with Google
-      </Button> */}
+      </Button>
     </AuthLayout>
   );
 }
-

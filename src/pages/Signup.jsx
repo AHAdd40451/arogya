@@ -49,6 +49,11 @@ export default function Signup() {
     setSuccess("");
     setSubmitting(true);
     try {
+      try {
+        localStorage.setItem("arogya_intended_role", roleChoice);
+      } catch {
+        // ignore
+      }
       const data = await signUpWithEmail({ email, password, roleHint: roleChoice });
 
       if (!data.session) {
@@ -58,6 +63,11 @@ export default function Signup() {
 
       await setMyRoleIfUnset(roleChoice);
       await updateMyProfile({ onboarding_step: 0 });
+      try {
+        localStorage.removeItem("arogya_intended_role");
+      } catch {
+        // ignore
+      }
       navigate(createPageUrl(getRoleOnboardingStartPage(roleChoice)), { replace: true });
     } catch (e) {
       setAuthError(getReadableAuthErrorMessage(e));
@@ -165,7 +175,7 @@ export default function Signup() {
         </form>
       </Form>
 
-      {/* <div className="relative py-2">
+      <div className="relative py-2">
         <div className="absolute inset-0 flex items-center">
           <div className="w-full border-t border-slate-200" />
         </div>
@@ -182,6 +192,11 @@ export default function Signup() {
         onClick={async () => {
           setAuthError("");
           try {
+            try {
+              localStorage.setItem("arogya_intended_role", roleChoice);
+            } catch {
+              // ignore
+            }
             await signInWithGoogle();
           } catch (e) {
             setAuthError(getReadableAuthErrorMessage(e));
@@ -189,8 +204,7 @@ export default function Signup() {
         }}
       >
         Continue with Google
-      </Button> */}
+      </Button>
     </AuthLayout>
   );
 }
-
