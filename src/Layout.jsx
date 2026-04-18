@@ -32,23 +32,6 @@ export default function Layout({ children, currentPageName }) {
               <span className="font-bold text-[#1F2937] text-base tracking-tight">Arogya</span>
             </Link>
 
-            {/* Desktop nav links — hidden on mobile */}
-            <div className="hidden md:flex items-center gap-1">
-              {navLinks.map((link) => (
-                <Link
-                  key={link.page}
-                  to={createPageUrl(link.page)}
-                  className={`px-3 py-1.5 text-sm font-medium rounded-lg transition-colors ${
-                    currentPageName === link.page
-                      ? "text-[#2A7F7F] bg-teal-50"
-                      : "text-slate-500 hover:text-[#1F2937] hover:bg-slate-50"
-                  }`}
-                >
-                  {link.label}
-                </Link>
-              ))}
-            </div>
-
             {/* Desktop CTAs */}
             <div className="hidden md:flex items-center gap-2">
               {!loading && user ? (
@@ -133,21 +116,6 @@ export default function Layout({ children, currentPageName }) {
               className="md:hidden bg-white border-t border-slate-100 overflow-hidden"
             >
               <div className="px-4 py-4 space-y-1">
-                {navLinks.map((link) => (
-                  <Link
-                    key={link.page}
-                    to={createPageUrl(link.page)}
-                    onClick={() => setMobileOpen(false)}
-                    className={`flex items-center justify-between px-3 py-2.5 text-sm font-medium rounded-lg transition-colors ${
-                      currentPageName === link.page
-                        ? "text-[#2A7F7F] bg-teal-50"
-                        : "text-slate-600 hover:text-[#1F2937] hover:bg-slate-50"
-                    }`}
-                  >
-                    {link.label}
-                    <ChevronRight className="w-4 h-4 text-slate-300" />
-                  </Link>
-                ))}
                 <div className="pt-3 border-t border-slate-100 mt-2">
                   {!loading && user ? (
                     <Button
