@@ -147,7 +147,7 @@ export default function Login() {
         </form>
       </Form>
 
-      <div className="relative py-2">
+      {/* <div className="relative py-2">
         <div className="absolute inset-0 flex items-center">
           <div className="w-full border-t border-slate-200" />
         </div>
@@ -171,7 +171,7 @@ export default function Login() {
         }}
       >
         Continue with Google
-      </Button>
+      </Button> */}
     </AuthLayout>
   );
 }
