@@ -34,6 +34,10 @@ export default function RequireAuth({ children, requiredRole, allowIncompleteOnb
     );
   }
 
+  if (!profile || !profile.role) {
+    return <Navigate to={createPageUrl("AuthCallback")} replace />;
+  }
+
   if (requiredRole && profile?.role && profile.role !== requiredRole) {
     return <Navigate to={createPageUrl("AuthCallback")} replace />;
   }
@@ -49,4 +53,3 @@ export default function RequireAuth({ children, requiredRole, allowIncompleteOnb
 
   return <>{children}</>;
 }
-

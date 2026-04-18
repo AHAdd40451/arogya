@@ -1,7 +1,4 @@
 import React from "react";
-import { Link } from "react-router-dom";
-import { Activity } from "lucide-react";
-import { createPageUrl } from "@/utils";
 
 export default function AuthLayout({ title, subtitle, children, footer }) {
   return (
@@ -31,4 +28,3 @@ export default function AuthLayout({ title, subtitle, children, footer }) {
     </div>
   );
 }
-

@@ -53,7 +53,6 @@ import Signup from './pages/Signup';
 import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
 import AuthCallback from './pages/AuthCallback';
-import ChooseRole from './pages/ChooseRole';
 import PatientOnboarding1 from './pages/PatientOnboarding1';
 import PatientOnboarding2 from './pages/PatientOnboarding2';
 import PatientOnboarding3 from './pages/PatientOnboarding3';
@@ -86,7 +85,6 @@ export const PAGES = {
     "ForgotPassword": ForgotPassword,
     "ResetPassword": ResetPassword,
     "AuthCallback": AuthCallback,
-    "ChooseRole": ChooseRole,
     "PatientOnboarding1": PatientOnboarding1,
     "PatientOnboarding2": PatientOnboarding2,
     "PatientOnboarding3": PatientOnboarding3,
