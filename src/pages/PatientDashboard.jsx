@@ -4,8 +4,7 @@ import { createPageUrl } from "@/utils";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { motion } from "framer-motion";
-import { Calendar, Pill, FlaskConical, Clock, ArrowRight, DollarSign, User, Search
-} from "lucide-react";
+import { Calendar, Pill, FlaskConical, Clock, ArrowRight, DollarSign, User, Search, MessageSquare } from "lucide-react";
 import NotificationBanner from "@/components/NotificationBanner";
 import DashboardCard from "@/components/dashboard/DashboardCard";
 import StatCard from "@/components/dashboard/StatCard";
@@ -52,13 +51,21 @@ export default function PatientDashboard() {
             <h1 className="text-2xl sm:text-3xl font-bold text-slate-900">Patient Dashboard</h1>
             <p className="text-slate-500 mt-1">Welcome back, {displayName}</p>
           </div>
-          <Link to={createPageUrl("TriageScreen")}>
-            <Button className="bg-[#2A7F7F] hover:bg-[#236969] rounded-xl px-5 py-4 text-sm font-semibold shadow-sm group">
-              <Search className="w-4 h-4 mr-2" />
-              Find Care Now
-              <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-0.5 transition-transform" />
-            </Button>
-          </Link>
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
+            <Link to={createPageUrl("Chat")} className="w-full sm:w-auto">
+              <Button variant="outline" className="w-full sm:w-auto rounded-xl border-slate-200">
+                <MessageSquare className="w-4 h-4 mr-2" />
+                Messages
+              </Button>
+            </Link>
+            <Link to={createPageUrl("TriageScreen")} className="w-full sm:w-auto">
+              <Button className="w-full sm:w-auto bg-[#2A7F7F] hover:bg-[#236969] rounded-xl px-5 py-4 text-sm font-semibold shadow-sm group">
+                <Search className="w-4 h-4 mr-2" />
+                Find Care Now
+                <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-0.5 transition-transform" />
+              </Button>
+            </Link>
+          </div>
         </motion.div>
 
         {/* Price Banner */}

@@ -29,6 +29,8 @@ function App() {
     ProviderOnboarding3: { requiredRole: "provider", allowIncompleteOnboarding: true },
     ProviderOnboarding4: { requiredRole: "provider", allowIncompleteOnboarding: true },
     ProviderOnboarding5: { requiredRole: "provider", allowIncompleteOnboarding: true },
+
+    Chat: { requiredRole: null, allowIncompleteOnboarding: false },
   };
 
   return (

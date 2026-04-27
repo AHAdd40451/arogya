@@ -38,9 +38,14 @@ export function getNextOnboardingPage({ role, onboardingStep }) {
 }
 
 export async function fetchMyProfile() {
+  const { data: userData, error: userError } = await supabase.auth.getUser();
+  if (userError) throw userError;
+  if (!userData.user) throw new Error("Not authenticated.");
+
   const { data, error } = await supabase
     .from("profiles")
     .select("*")
+    .eq("user_id", userData.user.id)
     .single();
 
   if (error) throw error;

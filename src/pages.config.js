@@ -75,6 +75,7 @@ import LabOrders from './pages/LabOrders';
 import TriageScreen from './pages/TriageScreen';
 import MatchingScreen from './pages/MatchingScreen';
 import RateVisit from './pages/RateVisit';
+import Chat from './pages/Chat';
 import __Layout from './Layout.jsx';
 
 
@@ -107,6 +108,7 @@ export const PAGES = {
     "TriageScreen": TriageScreen,
     "MatchingScreen": MatchingScreen,
     "RateVisit": RateVisit,
+    "Chat": Chat,
 }
 
 export const pagesConfig = {

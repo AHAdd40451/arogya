@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { motion } from "framer-motion";
-import { Calendar, DollarSign, Star, Clock, Check, X, Settings, Users, Wifi, WifiOff } from "lucide-react";
+import { Calendar, DollarSign, Star, Clock, Check, X, Settings, Users, Wifi, WifiOff, MessageSquare } from "lucide-react";
 import NotificationBanner from "@/components/NotificationBanner";
 import DashboardCard from "@/components/dashboard/DashboardCard";
 import StatCard from "@/components/dashboard/StatCard";
@@ -52,6 +52,16 @@ export default function ProviderDashboard() {
           <div>
             <h1 className="text-xl sm:text-2xl font-bold text-[#1F2937]">Provider Dashboard</h1>
             <p className="text-slate-500 mt-0.5 text-sm">Welcome back, {displayName}</p>
+            <div className="mt-3">
+              <Button
+                variant="outline"
+                className="rounded-xl border-slate-200"
+                onClick={() => navigate(createPageUrl("Chat"))}
+              >
+                <MessageSquare className="w-4 h-4 mr-2" />
+                Messages
+              </Button>
+            </div>
           </div>
           <button
             onClick={() => {
