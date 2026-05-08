@@ -4,9 +4,20 @@ import { createPageUrl } from "@/utils";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { motion, AnimatePresence } from "framer-motion";
-import { Star, Clock, Stethoscope, ArrowRight, ArrowLeft, X, Wifi } from "lucide-react";
+import {
+  Star,
+  Clock,
+  Stethoscope,
+  ArrowRight,
+  ArrowLeft,
+  X,
+  Wifi,
+} from "lucide-react";
 import { format, addDays, startOfDay, isAfter, isBefore } from "date-fns";
-import { listBookableProviders, listProviderBookedTimes } from "@/services/booking";
+import {
+  listBookableProviders,
+  listProviderBookedTimes,
+} from "@/services/booking";
 import {
   generateSlots,
   getBookedSlotStarts,
@@ -17,33 +28,33 @@ import {
 
 // Map triage concern IDs to provider service tags
 const CONCERN_TO_SERVICE = {
-  cold_flu:            "urgent",
-  skin:                "urgent",
-  prescription:        "refills",
-  general:             "routine",
-  other:               "routine",
-  urgent:              "urgent",
-  routine:             "routine",
+  cold_flu: "urgent",
+  skin: "urgent",
+  prescription: "refills",
+  general: "routine",
+  other: "routine",
+  urgent: "urgent",
+  routine: "routine",
   prescription_refill: "refills",
 };
 
 export default function MatchingScreen() {
   const navigate = useNavigate();
-  const params               = new URLSearchParams(window.location.search);
-  const concern              = params.get("concern") || "general";
-  const preselectedId        = params.get("provider_user_id") || null;
+  const params = new URLSearchParams(window.location.search);
+  const concern = params.get("concern") || "general";
+  const preselectedId = params.get("provider_user_id") || null;
 
   const service = CONCERN_TO_SERVICE[concern] ?? null;
 
   // phase: loading | list | slots
-  const [phase, setPhase]               = useState(preselectedId ? "loading" : "loading");
-  const [providers, setProviders]       = useState([]);
+  const [phase, setPhase] = useState(preselectedId ? "loading" : "loading");
+  const [providers, setProviders] = useState([]);
   const [selectedProvider, setSelected] = useState(null);
-  const [error, setError]               = useState("");
+  const [error, setError] = useState("");
 
   // slot picker state
   const [selectedDate, setSelectedDate] = useState(new Date());
-  const [slots, setSlots]               = useState([]);
+  const [slots, setSlots] = useState([]);
   const [bookedStarts, setBookedStarts] = useState(new Set());
   const [loadingSlots, setLoadingSlots] = useState(false);
   const [selectedSlot, setSelectedSlot] = useState(null);
@@ -76,16 +87,20 @@ export default function MatchingScreen() {
   // Reload slots when provider or date changes
   useEffect(() => {
     if (!selectedProvider || !selectedDate) return;
-    const dateStr     = format(selectedDate, "yyyy-MM-dd");
+    const dateStr = format(selectedDate, "yyyy-MM-dd");
     const windowStart = new Date(`${dateStr}T00:00:00Z`);
-    const windowEnd   = new Date(`${dateStr}T23:59:59Z`);
+    const windowEnd = new Date(`${dateStr}T23:59:59Z`);
 
     setLoadingSlots(true);
     setSelectedSlot(null);
 
     const generated = generateSlots(dateStr, selectedProvider);
 
-    listProviderBookedTimes(selectedProvider.provider_user_id, windowStart, windowEnd)
+    listProviderBookedTimes(
+      selectedProvider.provider_user_id,
+      windowStart,
+      windowEnd,
+    )
       .then((bookedTimes) => {
         const disabled = getBookedSlotStarts(
           generated,
@@ -112,16 +127,16 @@ export default function MatchingScreen() {
   const handleContinue = () => {
     const p = new URLSearchParams({
       provider_user_id: selectedProvider.provider_user_id,
-      provider:         selectedProvider.provider_name || "",
-      credentials:      "NP",
-      specialty:        selectedProvider.specialty || "",
-      years:            String(selectedProvider.years_experience ?? ""),
-      rating:           "4.8",
-      fee:              "$59.99",
-      starts_at:        selectedSlot.toISOString(),
+      provider: selectedProvider.provider_name || "",
+      credentials: "NP",
+      specialty: selectedProvider.specialty || "",
+      years: String(selectedProvider.years_experience ?? ""),
+      rating: "4.8",
+      fee: "$59.99",
+      starts_at: selectedSlot.toISOString(),
       concern,
     });
-    navigate(createPageUrl("PaymentScreen") + "&" + p.toString());
+    navigate(createPageUrl("PaymentScreen") + "?" + p.toString());
   };
 
   return (
@@ -135,7 +150,6 @@ export default function MatchingScreen() {
         </button>
 
         <AnimatePresence mode="wait">
-
           {/* Loading */}
           {phase === "loading" && (
             <motion.div
@@ -147,21 +161,39 @@ export default function MatchingScreen() {
             >
               <div className="relative w-20 h-20 mx-auto mb-6">
                 <div className="absolute inset-0 rounded-full bg-[#2A7F7F]/10 animate-ping" />
-                <div className="absolute inset-2 rounded-full bg-[#2A7F7F]/20 animate-ping" style={{ animationDelay: "0.3s" }} />
+                <div
+                  className="absolute inset-2 rounded-full bg-[#2A7F7F]/20 animate-ping"
+                  style={{ animationDelay: "0.3s" }}
+                />
                 <div className="relative w-20 h-20 rounded-full bg-[#2A7F7F] flex items-center justify-center">
-                  <Stethoscope className="w-8 h-8 text-white" strokeWidth={1.5} />
+                  <Stethoscope
+                    className="w-8 h-8 text-white"
+                    strokeWidth={1.5}
+                  />
                 </div>
               </div>
-              <h2 className="text-lg font-semibold text-[#1F2937] mb-2">Finding available providers…</h2>
-              <p className="text-sm text-slate-500">Matching you with the best available care for your concern.</p>
+              <h2 className="text-lg font-semibold text-[#1F2937] mb-2">
+                Finding available providers…
+              </h2>
+              <p className="text-sm text-slate-500">
+                Matching you with the best available care for your concern.
+              </p>
             </motion.div>
           )}
 
           {/* Provider list */}
           {phase === "list" && (
-            <motion.div key="list" initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}>
-              <h2 className="text-lg font-semibold text-[#1F2937] mb-1">Available Providers</h2>
-              <p className="text-sm text-slate-500 mb-5">Select a provider to view appointment slots.</p>
+            <motion.div
+              key="list"
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+            >
+              <h2 className="text-lg font-semibold text-[#1F2937] mb-1">
+                Available Providers
+              </h2>
+              <p className="text-sm text-slate-500 mb-5">
+                Select a provider to view appointment slots.
+              </p>
 
               {error && <p className="text-sm text-red-600 mb-4">{error}</p>}
 
@@ -169,13 +201,19 @@ export default function MatchingScreen() {
                 <div className="text-center py-16 text-slate-400">
                   <Stethoscope className="w-10 h-10 mx-auto mb-3 opacity-40" />
                   <p className="text-sm">No providers available right now.</p>
-                  <p className="text-xs mt-1">Please try again later or select a different concern.</p>
+                  <p className="text-xs mt-1">
+                    Please try again later or select a different concern.
+                  </p>
                 </div>
               )}
 
               <div className="space-y-3">
                 {providers.map((p) => (
-                  <ProviderCard key={p.provider_user_id} provider={p} onSelect={handleSelectProvider} />
+                  <ProviderCard
+                    key={p.provider_user_id}
+                    provider={p}
+                    onSelect={handleSelectProvider}
+                  />
                 ))}
               </div>
             </motion.div>
@@ -183,7 +221,12 @@ export default function MatchingScreen() {
 
           {/* Slot picker */}
           {phase === "slots" && selectedProvider && (
-            <motion.div key="slots" initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} className="w-full">
+            <motion.div
+              key="slots"
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="w-full"
+            >
               <button
                 onClick={() => setPhase("list")}
                 className="inline-flex items-center gap-2 text-sm text-slate-500 hover:text-slate-700 mb-5"
@@ -204,7 +247,8 @@ export default function MatchingScreen() {
                       {selectedProvider.provider_name}, NP
                     </p>
                     <p className="text-xs text-slate-500">
-                      {selectedProvider.specialty || "General Care"} · {selectedProvider.years_experience ?? "—"} yrs exp.
+                      {selectedProvider.specialty || "General Care"} ·{" "}
+                      {selectedProvider.years_experience ?? "—"} yrs exp.
                     </p>
                   </div>
                 </div>
@@ -229,7 +273,9 @@ export default function MatchingScreen() {
                 </p>
 
                 {loadingSlots ? (
-                  <p className="text-sm text-slate-400 text-center py-4">Loading slots…</p>
+                  <p className="text-sm text-slate-400 text-center py-4">
+                    Loading slots…
+                  </p>
                 ) : slots.length === 0 ? (
                   <p className="text-sm text-slate-400 text-center py-4">
                     No availability on this day — try another date.
@@ -237,11 +283,11 @@ export default function MatchingScreen() {
                 ) : (
                   <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
                     {slots.map((slot) => {
-                      const isoStr    = slot.toISOString();
-                      const isPast    = isBefore(slot, now);
-                      const isBooked  = bookedStarts.has(isoStr);
-                      const isChosen  = selectedSlot?.toISOString() === isoStr;
-                      const disabled  = isPast || isBooked;
+                      const isoStr = slot.toISOString();
+                      const isPast = isBefore(slot, now);
+                      const isBooked = bookedStarts.has(isoStr);
+                      const isChosen = selectedSlot?.toISOString() === isoStr;
+                      const disabled = isPast || isBooked;
 
                       return (
                         <button
@@ -252,8 +298,8 @@ export default function MatchingScreen() {
                             isChosen
                               ? "bg-[#2A7F7F] text-white border-[#2A7F7F]"
                               : disabled
-                              ? "bg-slate-50 text-slate-300 border-slate-100 cursor-not-allowed"
-                              : "bg-white text-slate-700 border-slate-200 hover:border-[#2A7F7F] hover:text-[#2A7F7F]"
+                                ? "bg-slate-50 text-slate-300 border-slate-100 cursor-not-allowed"
+                                : "bg-white text-slate-700 border-slate-200 hover:border-[#2A7F7F] hover:text-[#2A7F7F]"
                           }`}
                         >
                           {formatSlotTime(slot, selectedProvider.time_zone)}
@@ -278,7 +324,6 @@ export default function MatchingScreen() {
               </Button>
             </motion.div>
           )}
-
         </AnimatePresence>
       </div>
     </div>
@@ -286,8 +331,8 @@ export default function MatchingScreen() {
 }
 
 function ProviderCard({ provider, onSelect }) {
-  const available  = isAvailableNow(provider);
-  const nextAvail  = available ? null : getNextAvailable(provider);
+  const available = isAvailableNow(provider);
+  const nextAvail = available ? null : getNextAvailable(provider);
 
   return (
     <div className="bg-white border border-slate-100 rounded-2xl p-4 sm:p-5">
@@ -303,7 +348,8 @@ function ProviderCard({ provider, onSelect }) {
               {provider.provider_name}, NP
             </p>
             <p className="text-xs text-slate-500 mt-0.5">
-              {provider.specialty || "General Care"} · {provider.years_experience ?? "—"} yrs exp.
+              {provider.specialty || "General Care"} ·{" "}
+              {provider.years_experience ?? "—"} yrs exp.
             </p>
           </div>
         </div>
