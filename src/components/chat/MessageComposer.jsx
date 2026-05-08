@@ -38,9 +38,9 @@ export default function MessageComposer({ disabled, onSend }) {
           <Send className="w-4 h-4" />
         </Button>
       </div>
-      <p className="text-[11px] text-slate-400 mt-2">
+      {/* <p className="text-[11px] text-slate-400 mt-2">
         Messages are encrypted in transit and protected by Supabase row-level security.
-      </p>
+      </p> */}
     </div>
   );
 }

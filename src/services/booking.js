@@ -29,6 +29,19 @@ export async function bookAppointment({ providerUserId, startsAt, concern }) {
   return data;
 }
 
+/** @param {string} providerUserId @param {string} patientUserId */
+export async function listConversationAppointments(providerUserId, patientUserId) {
+  const { data, error } = await supabase
+    .from("appointments")
+    .select("*")
+    .eq("provider_user_id", providerUserId)
+    .eq("patient_user_id", patientUserId)
+    .order("starts_at", { ascending: true })
+    .limit(10);
+  if (error) throw error;
+  return data ?? [];
+}
+
 export async function listMyAppointments({ role, from, to, status } = {}) {
   const { data: userData, error: userError } = await supabase.auth.getUser();
   if (userError) throw userError;

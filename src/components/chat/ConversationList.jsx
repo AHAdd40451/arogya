@@ -22,7 +22,7 @@ export default function ConversationList({
   roleLabel,
 }) {
   return (
-    <div className="bg-white border border-slate-100 rounded-2xl overflow-hidden flex flex-col min-h-[520px]">
+    <div className="bg-white border border-slate-100 rounded-2xl overflow-hidden flex flex-col h-full">
       <div className="px-4 py-3 border-b border-slate-100">
         <p className="text-sm font-semibold text-slate-900">Messages</p>
         <p className="text-xs text-slate-500 mt-0.5">Your {roleLabel} conversations</p>

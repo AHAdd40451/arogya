@@ -7,14 +7,17 @@ import { Label } from "@/components/ui/label";
 import { motion } from "framer-motion";
 import { ArrowLeft, Lock, CreditCard } from "lucide-react";
 import { bookAppointment } from "@/services/booking";
+import { getOrCreateConversation, sendTextMessage } from "@/services/chat";
+import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/components/ui/use-toast";
 import { format, differenceInMinutes } from "date-fns";
 
 const NOW_THRESHOLD_MINUTES = 5;
 
 export default function PaymentScreen() {
-  const navigate     = useNavigate();
-  const { toast }    = useToast();
+  const navigate        = useNavigate();
+  const { toast }       = useToast();
+  const { profile }     = useAuth();
   const params       = new URLSearchParams(window.location.search);
 
   const providerUserId = params.get("provider_user_id") || null;
@@ -45,12 +48,23 @@ export default function PaymentScreen() {
 
     try {
       if (providerUserId && startsAt) {
-        // Create real appointment
-        await bookAppointment({
-          providerUserId,
-          startsAt,
-          concern: type,
-        });
+        await bookAppointment({ providerUserId, startsAt, concern: type });
+      }
+
+      // Initiate provider↔patient chat after booking (non-blocking)
+      if (providerUserId && profile?.user_id) {
+        try {
+          const convo = await getOrCreateConversation({
+            providerUserId,
+            patientUserId: profile.user_id,
+          });
+          await sendTextMessage({
+            conversationId: convo.id,
+            text: `Hi! I've booked an appointment for ${formatStartsAt()}. Looking forward to our visit.`,
+          });
+        } catch {
+          // Chat creation is non-critical — booking already succeeded
+        }
       }
 
       // Route: if appointment starts within threshold → go to VirtualVisit

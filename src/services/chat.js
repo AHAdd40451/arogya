@@ -72,16 +72,21 @@ export async function getOrCreateConversation({ providerUserId, patientUserId })
   return data;
 }
 
-export async function fetchConversationMessages({ conversationId, limit = 200 }) {
-  const { data, error } = await supabase
+export async function fetchConversationMessages({ conversationId, limit = 10, before = null }) {
+  let query = supabase
     .from("messages")
     .select(MESSAGE_SELECT)
     .eq("conversation_id", conversationId)
-    .order("created_at", { ascending: true })
+    .order("created_at", { ascending: false }) // newest first so LIMIT gives us the tail
     .limit(limit);
 
+  if (before) {
+    query = query.lt("created_at", before);
+  }
+
+  const { data, error } = await query;
   if (error) throw error;
-  return data ?? [];
+  return (data ?? []).reverse(); // return in ascending (oldest → newest) order
 }
 
 export async function sendTextMessage({ conversationId, text }) {
