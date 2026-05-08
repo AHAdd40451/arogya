@@ -1,8 +1,10 @@
 // Inspired by react-hot-toast library
 import { useState, useEffect } from "react";
 
-const TOAST_LIMIT = 20;
-const TOAST_REMOVE_DELAY = 1000000;
+const TOAST_LIMIT = 3;
+// Time (ms) to wait after a toast is dismissed before removing it from state
+// — just long enough for the exit animation to complete.
+const TOAST_REMOVE_DELAY = 400;
 
 const actionTypes = {
   ADD_TOAST: "ADD_TOAST",
@@ -110,7 +112,7 @@ function dispatch(action) {
   });
 }
 
-function toast({ ...props }) {
+function toast({ duration = 5000, ...props }) {
   const id = genId();
 
   const update = (props) =>
@@ -133,6 +135,11 @@ function toast({ ...props }) {
       },
     },
   });
+
+  // Auto-dismiss after `duration` ms (pass Infinity to keep it until manually closed)
+  if (duration !== Infinity) {
+    setTimeout(dismiss, duration);
+  }
 
   return {
     id,
