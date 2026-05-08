@@ -1,33 +1,25 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { motion } from "framer-motion";
 import { Calendar, Pill, FlaskConical, Clock, ArrowRight, DollarSign, User, Search, MessageSquare } from "lucide-react";
-import NotificationBanner from "@/components/NotificationBanner";
 import DashboardCard from "@/components/dashboard/DashboardCard";
 import StatCard from "@/components/dashboard/StatCard";
 import { useAuth } from "@/hooks/useAuth";
-
-const mockAppointments = [
-  { id: 1, provider: "NP Jane Smith", date: "March 10", time: "2:00 PM", type: "Routine", status: "Upcoming" },
-];
+import { listMyAppointments } from "@/services/booking";
+import { format } from "date-fns";
 
 const mockPrescriptions = [
   { id: 1, name: "Amoxicillin 500mg", refills: 2, status: "Active" },
-  { id: 2, name: "Metformin 500mg", refills: 5, status: "Active" },
+  { id: 2, name: "Metformin 500mg",   refills: 5, status: "Active" },
 ];
 
 const mockLabs = [
-  { id: 1, name: "CBC", status: "Results Ready" },
-  { id: 2, name: "CMP", status: "Pending" },
-  { id: 3, name: "Lipid Panel", status: "Pending" },
-];
-
-const mockHistory = [
-  { id: 1, date: "Feb 20, 2025", provider: "NP Jane Smith", type: "Prescription Refill", fee: "$59.99" },
-  { id: 2, date: "Jan 8, 2025", provider: "NP Sarah Lee", type: "Routine Consultation", fee: "$59.99" },
+  { id: 1, name: "CBC",        status: "Results Ready" },
+  { id: 2, name: "CMP",        status: "Pending" },
+  { id: 3, name: "Lipid Panel",status: "Pending" },
 ];
 
 const fadeIn = { initial: { opacity: 0, y: 12 }, animate: { opacity: 1, y: 0 } };
@@ -35,16 +27,34 @@ const fadeIn = { initial: { opacity: 0, y: 12 }, animate: { opacity: 1, y: 0 } }
 export default function PatientDashboard() {
   const { profile } = useAuth();
   const displayName = profile?.full_name || "Patient";
-  const [notification, setNotification] = React.useState(null);
 
-  React.useEffect(() => {
-    const t = setTimeout(() => setNotification({ type: 'visit', message: 'Your upcoming appointment is confirmed for March 10 at 2:00 PM.' }), 800);
-    return () => clearTimeout(t);
+  const [upcoming, setUpcoming]       = useState([]);
+  const [history, setHistory]         = useState([]);
+  const [loadingAppts, setLoadingAppts] = useState(true);
+
+  useEffect(() => {
+    const now = new Date();
+    Promise.all([
+      listMyAppointments({ role: "patient", from: now, status: "scheduled" }),
+      listMyAppointments({ role: "patient", to: now, status: ["completed", "canceled"] }),
+    ])
+      .then(([upcomingData, historyData]) => {
+        setUpcoming(upcomingData);
+        setHistory(historyData);
+      })
+      .catch(() => {})
+      .finally(() => setLoadingAppts(false));
   }, []);
+
+  const formatApptDate = (startsAt) => {
+    try { return format(new Date(startsAt), "MMM d 'at' h:mm a"); }
+    catch { return "—"; }
+  };
+
   return (
     <div className="min-h-screen bg-[#F7F9FB]">
-      <NotificationBanner notification={notification} onDismiss={() => setNotification(null)} />
       <div className="max-w-7xl mx-auto px-4 sm:px-5 lg:px-8 py-6 sm:py-8">
+
         {/* Header */}
         <motion.div {...fadeIn} className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-4">
           <div>
@@ -54,8 +64,7 @@ export default function PatientDashboard() {
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
             <Link to={createPageUrl("Chat")} className="w-full sm:w-auto">
               <Button variant="outline" className="w-full sm:w-auto rounded-xl border-slate-200">
-                <MessageSquare className="w-4 h-4 mr-2" />
-                Messages
+                <MessageSquare className="w-4 h-4 mr-2" /> Messages
               </Button>
             </Link>
             <Link to={createPageUrl("TriageScreen")} className="w-full sm:w-auto">
@@ -78,34 +87,36 @@ export default function PatientDashboard() {
 
         {/* Stats */}
         <motion.div {...fadeIn} transition={{ delay: 0.1 }} className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-6 sm:mb-8">
-          <StatCard label="Upcoming Visits" value="1" icon={Calendar} color="blue" />
-          <StatCard label="Prescriptions" value="2 active" icon={Pill} color="purple" />
-          <StatCard label="Lab Orders" value="3" icon={FlaskConical} color="amber" />
-          <StatCard label="Total Visits" value="2" icon={Clock} color="teal" />
+          <StatCard label="Upcoming Visits" value={loadingAppts ? "…" : String(upcoming.length)} icon={Calendar}     color="blue" />
+          <StatCard label="Prescriptions"   value="2 active"                                     icon={Pill}         color="purple" />
+          <StatCard label="Lab Orders"      value="3"                                             icon={FlaskConical} color="amber" />
+          <StatCard label="Total Visits"    value={loadingAppts ? "…" : String(upcoming.length + history.length)} icon={Clock} color="teal" />
         </motion.div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
-          {/* Upcoming */}
+
+          {/* Upcoming Appointments */}
           <motion.div {...fadeIn} transition={{ delay: 0.15 }}>
             <DashboardCard title="Upcoming Appointments" icon={Calendar}>
               <div className="space-y-3">
-                {mockAppointments.map((apt) => (
+                {loadingAppts && <p className="text-sm text-slate-400 text-center py-4">Loading…</p>}
+                {!loadingAppts && upcoming.length === 0 && (
+                  <p className="text-sm text-slate-400 text-center py-4">No upcoming appointments</p>
+                )}
+                {upcoming.map((apt) => (
                   <div key={apt.id} className="flex items-center justify-between p-3 bg-slate-50 rounded-xl">
                     <div className="flex items-center gap-3">
                       <div className="w-10 h-10 rounded-lg bg-teal-100 flex items-center justify-center">
                         <User className="w-5 h-5 text-teal-600" />
                       </div>
                       <div>
-                        <p className="text-sm font-semibold text-slate-900">{apt.provider}</p>
-                        <p className="text-xs text-slate-500">{apt.date} at {apt.time} · {apt.type}</p>
+                        <p className="text-sm font-semibold text-slate-900">{apt.provider_name}</p>
+                        <p className="text-xs text-slate-500">{formatApptDate(apt.starts_at)} · {apt.concern || "General"}</p>
                       </div>
                     </div>
-                    <Badge className="bg-blue-100 text-blue-700">{apt.status}</Badge>
+                    <Badge className="bg-blue-100 text-blue-700 capitalize">{apt.status}</Badge>
                   </div>
                 ))}
-                {mockAppointments.length === 0 && (
-                  <p className="text-sm text-slate-400 text-center py-4">No upcoming appointments</p>
-                )}
               </div>
             </DashboardCard>
           </motion.div>
@@ -163,18 +174,23 @@ export default function PatientDashboard() {
           <motion.div {...fadeIn} transition={{ delay: 0.3 }}>
             <DashboardCard title="Visit History" icon={Clock}>
               <div className="space-y-3">
-                {mockHistory.map((v) => (
+                {loadingAppts && <p className="text-sm text-slate-400 text-center py-4">Loading…</p>}
+                {!loadingAppts && history.length === 0 && (
+                  <p className="text-sm text-slate-400 text-center py-4">No past visits yet</p>
+                )}
+                {history.map((v) => (
                   <div key={v.id} className="flex items-center justify-between p-3 bg-slate-50 rounded-xl">
                     <div>
-                      <p className="text-sm font-semibold text-slate-900">{v.type}</p>
-                      <p className="text-xs text-slate-500">{v.date} · {v.provider}</p>
+                      <p className="text-sm font-semibold text-slate-900">{v.concern || "General Visit"}</p>
+                      <p className="text-xs text-slate-500">{formatApptDate(v.starts_at)} · {v.provider_name}</p>
                     </div>
-                    <span className="text-sm font-bold text-teal-700">{v.fee}</span>
+                    <span className="text-sm font-bold text-teal-700">$59.99</span>
                   </div>
                 ))}
               </div>
             </DashboardCard>
           </motion.div>
+
         </div>
       </div>
     </div>

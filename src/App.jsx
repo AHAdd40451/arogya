@@ -31,6 +31,11 @@ function App() {
     ProviderOnboarding5: { requiredRole: "provider", allowIncompleteOnboarding: true },
 
     Chat: { requiredRole: null, allowIncompleteOnboarding: false },
+
+    TriageScreen:   { requiredRole: "patient", allowIncompleteOnboarding: false },
+    MatchingScreen: { requiredRole: "patient", allowIncompleteOnboarding: false },
+    PaymentScreen:  { requiredRole: "patient", allowIncompleteOnboarding: false },
+    RequestVisit:   { requiredRole: "patient", allowIncompleteOnboarding: false },
   };
 
   return (

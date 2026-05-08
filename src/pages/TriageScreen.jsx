@@ -19,7 +19,7 @@ export default function TriageScreen() {
 
   const handleContinue = () => {
     const params = new URLSearchParams({ concern: selected });
-    navigate(createPageUrl("MatchingScreen") + "&" + params.toString());
+    navigate(createPageUrl("MatchingScreen") + "?" + params.toString());
   };
 
   return (
