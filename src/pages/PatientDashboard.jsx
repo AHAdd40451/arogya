@@ -78,18 +78,18 @@ export default function PatientDashboard() {
         </motion.div>
 
         {/* Price Banner */}
-        <motion.div {...fadeIn} transition={{ delay: 0.05 }}
+        {/* <motion.div {...fadeIn} transition={{ delay: 0.05 }}
           className="bg-white border border-slate-100 rounded-xl px-5 py-3.5 flex items-center gap-3 mb-8"
         >
           <DollarSign className="w-4 h-4 text-[#2A7F7F] shrink-0" />
           <p className="text-sm text-slate-600">$59.99 per visit — <span className="font-semibold text-[#1F2937]">pay only when you need care.</span> No subscription required.</p>
-        </motion.div>
+        </motion.div> */}
 
         {/* Stats */}
         <motion.div {...fadeIn} transition={{ delay: 0.1 }} className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-6 sm:mb-8">
           <StatCard label="Upcoming Visits" value={loadingAppts ? "…" : String(upcoming.length)} icon={Calendar}     color="blue" />
-          <StatCard label="Prescriptions"   value="2 active"                                     icon={Pill}         color="purple" />
-          <StatCard label="Lab Orders"      value="3"                                             icon={FlaskConical} color="amber" />
+          <StatCard label="Prescriptions"   value="0 active"                                     icon={Pill}         color="purple" />
+          <StatCard label="Lab Orders"      value="0"                                             icon={FlaskConical} color="amber" />
           <StatCard label="Total Visits"    value={loadingAppts ? "…" : String(upcoming.length + history.length)} icon={Clock} color="teal" />
         </motion.div>
 
@@ -122,7 +122,7 @@ export default function PatientDashboard() {
           </motion.div>
 
           {/* Prescriptions */}
-          <motion.div {...fadeIn} transition={{ delay: 0.2 }}>
+          {/* <motion.div {...fadeIn} transition={{ delay: 0.2 }}>
             <DashboardCard
               title="Prescriptions"
               icon={Pill}
@@ -144,10 +144,10 @@ export default function PatientDashboard() {
                 ))}
               </div>
             </DashboardCard>
-          </motion.div>
+          </motion.div> */}
 
           {/* Lab Orders */}
-          <motion.div {...fadeIn} transition={{ delay: 0.25 }}>
+          {/* <motion.div {...fadeIn} transition={{ delay: 0.25 }}>
             <DashboardCard
               title="Lab Orders"
               icon={FlaskConical}
@@ -168,7 +168,7 @@ export default function PatientDashboard() {
                 ))}
               </div>
             </DashboardCard>
-          </motion.div>
+          </motion.div> */}
 
           {/* Visit History */}
           <motion.div {...fadeIn} transition={{ delay: 0.3 }}>

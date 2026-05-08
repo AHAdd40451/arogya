@@ -216,7 +216,7 @@ export default function ProviderDashboard() {
           </motion.div>
 
           {/* Earnings */}
-          <motion.div {...fadeIn} transition={{ delay: 0.25 }}>
+          {/* <motion.div {...fadeIn} transition={{ delay: 0.25 }}>
             <DashboardCard title="Earnings Tracker" icon={DollarSign}>
               <div className="space-y-3">
                 <div className="p-3 bg-teal-50 rounded-xl border border-teal-100 text-sm">
@@ -238,7 +238,7 @@ export default function ProviderDashboard() {
                 ))}
               </div>
             </DashboardCard>
-          </motion.div>
+          </motion.div> */}
 
           {/* Availability Settings */}
           <motion.div {...fadeIn} transition={{ delay: 0.3 }}>
